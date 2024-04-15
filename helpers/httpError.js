@@ -6,10 +6,10 @@ const messages = {
   409: "Conflict",
 };
 
-const createError = (status, message = messages[status]) => {
+const httpError = (status, message = messages[status]) => {
   const error = new Error(message);
   error.status = status;
   return error;
 };
 
-export { createError };
+export { httpError };

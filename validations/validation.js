@@ -8,9 +8,4 @@ const contactValidation = Joi.object({
   favorite: Joi.boolean(),
 });
 
-// Bundle validations  into a single object
-const validations = {
-  validateContacts: contactValidation,
-};
-
-export { validations };
+export { contactValidation };

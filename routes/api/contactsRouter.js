@@ -1,8 +1,8 @@
 import express from "express";
 // prettier-ignore
 import {listContacts, getContactById, removeContact, addContact, updateContactById} from "../../models/contacts.js";
-import { validations } from "../../validations/validation.js";
-import { createError } from "../../helpers/createError.js";
+import { contactValidation } from "../../validations/validation.js";
+import { httpError } from "../../helpers/httpError.js";
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ router.get("/:contactId", async (req, res, next) => {
     const result = await getContactById(contactId);
 
     if (!result) {
-      throw createError(404);
+      throw httpError(404);
     }
 
     res.json(result);
@@ -33,9 +33,9 @@ router.get("/:contactId", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     // Preventing lack of necessary data
-    const { error } = validations.validateContacts(req.body);
+    const { error } = contactValidation.validate(req.body);
     if (error) {
-      throw createError(400, "missing required name field");
+      throw httpError(400, "missing required name field");
     }
 
     const result = await addContact(req.body);
@@ -51,7 +51,7 @@ router.delete("/:contactId", async (req, res, next) => {
     const result = await removeContact(contactId);
 
     if (!result) {
-      throw createError(404);
+      throw httpError(404);
     }
 
     res.json({
@@ -65,16 +65,16 @@ router.delete("/:contactId", async (req, res, next) => {
 router.put("/:contactId", async (req, res, next) => {
   try {
     // Preventing lack of necessary data
-    const { error } = validations.validateContacts(req.body);
+    const { error } = contactValidation.validate(req.body);
     if (error) {
-      throw createError(400, "missing fields");
+      throw httpError(400, "missing fields");
     }
 
     const { contactId } = req.params;
     const result = await updateContactById(contactId, req.body);
 
     if (!result) {
-      throw createError(404);
+      throw httpError(404);
     }
 
     res.json(result);
