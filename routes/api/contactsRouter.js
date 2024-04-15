@@ -33,7 +33,7 @@ router.get("/:contactId", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     // Preventing lack of necessary data
-    const { error } = validations.validateContact(req.body);
+    const { error } = validations.validateContacts(req.body);
     if (error) {
       throw createError(400, "missing required name field");
     }
@@ -65,7 +65,7 @@ router.delete("/:contactId", async (req, res, next) => {
 router.put("/:contactId", async (req, res, next) => {
   try {
     // Preventing lack of necessary data
-    const { error } = validations.validateContact(req.body);
+    const { error } = validations.validateContacts(req.body);
     if (error) {
       throw createError(400, "missing fields");
     }
