@@ -37,10 +37,21 @@ const addContact = async (req, res) => {
   // Validate the incoming data using Joi
   const { error } = contactValidation.validate(req.body);
   if (error) {
-    throw httpError(400, "Missing required name field");
+    return res.status(400).json({ message: "Missing required name field" });
   }
 
-  // Model.create()
+  const { name, email } = req.body;
+
+  // Check if a contact with the same name or email already exists
+  const existingContact = await Contact.findOne({
+    $or: [{ name }, { email }],
+  });
+
+  if (existingContact) {
+    throw httpError(409, "Contact with this name and email already exists");
+  }
+
+  // Create a new contact
   const result = await Contact.create(req.body);
 
   // Respond with the newly added contact
