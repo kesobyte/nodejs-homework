@@ -12,8 +12,9 @@ mongoose
     app.listen(PORT, () =>
       console.log(`Server running. Use our API on port: ${PORT}`)
     );
-    console.log("Database connect successful");
+    console.log("Database connection successful");
   })
-  .catch((err) =>
-    console.log(`Server not running. Error message: ${err.message}`)
-  );
+  .catch((err) => {
+    console.error(`Server not running. Error message: ${err.message}`);
+    process.exit(1); // Exit with a failure code
+  });
