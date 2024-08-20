@@ -7,4 +7,8 @@ const contactValidation = Joi.object({
   phone: Joi.string().required(),
 });
 
-export { contactValidation };
+const favoriteValidation = Joi.object({
+  favorite: Joi.bool().required(),
+});
+
+export { contactValidation, favoriteValidation };

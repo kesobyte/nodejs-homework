@@ -1,146 +1,129 @@
 import { httpError } from "../helpers/httpError.js";
-import { nanoid } from "nanoid";
-import { contactValidation } from "../validations/validation.js";
-import fs from "fs/promises";
-import path from "path";
-
-// Model Path
-const contactsPath = path.join("models", "contacts.json");
+import {
+  contactValidation,
+  favoriteValidation,
+} from "../validations/validation.js";
+import { Contact } from "../models/contactsModel.js";
+import mongoose from "mongoose";
 
 // GET ALL CONTACTS
-const listContacts = async (_req, res, next) => {
-  try {
-    // Read the contacts from the JSON file
-    const data = await fs.readFile(contactsPath);
-    const contacts = JSON.parse(data);
-
-    // Return all contacts
-    res.json(contacts);
-  } catch (error) {
-    next(error);
-  }
+const listContacts = async (_req, res) => {
+  //Model.find()
+  const result = await Contact.find();
+  res.json(result);
 };
 
 // GET CONTACT BY ID
-const getContactById = async (req, res, next) => {
-  try {
-    // Read the contacts from the JSON file
-    const data = await fs.readFile(contactsPath);
-    const contacts = JSON.parse(data);
+const getContactById = async (req, res) => {
+  const { contactId } = req.params;
 
-    // Extract the contactId from request parameters
-    const { contactId } = req.params;
-
-    // Find the contact by ID
-    const contact = contacts.find((contact) => contact.id === contactId);
-
-    // If the contact is not found, throw a 404 error
-    if (!contact) {
-      throw httpError(404, "Not found");
-    }
-
-    // Respond with the contact data
-    res.json(contact);
-  } catch (error) {
-    next(error);
+  // Validate the format of contactId
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw httpError(400, "Invalid Contact ID format");
   }
+
+  // Model.findById()
+  const result = await Contact.findById(contactId);
+
+  if (!result) {
+    throw httpError(404, "Contact ID not found");
+  }
+
+  res.json(result);
 };
 
 // ADD CONTACT
-const addContact = async (req, res, next) => {
-  try {
-    // Read the current contacts
-    const data = await fs.readFile(contactsPath);
-    const contacts = JSON.parse(data);
-
-    // Validate the incoming data using Joi
-    const { error } = contactValidation.validate(req.body);
-    if (error) {
-      throw httpError(400, "Missing required name field");
-    }
-
-    // Destructure the request body
-    const { name, email, phone } = req.body;
-    const newContact = { id: nanoid(), name, email, phone };
-
-    // Add new contact to the list
-    contacts.push(newContact);
-
-    // Write the updated contacts to the file
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-    // Respond with the newly added contact
-    res.status(201).json(newContact);
-  } catch (error) {
-    next(error);
+const addContact = async (req, res) => {
+  // Validate the incoming data using Joi
+  const { error } = contactValidation.validate(req.body);
+  if (error) {
+    throw httpError(400, "Missing required name field");
   }
+
+  // Model.create()
+  const result = await Contact.create(req.body);
+
+  // Respond with the newly added contact
+  res.status(201).json(result);
 };
 
 // DELETE CONTACT
-const removeContact = async (req, res, next) => {
-  try {
-    // Read the current contacts
-    const data = await fs.readFile(contactsPath);
-    const contacts = JSON.parse(data);
+const removeContact = async (req, res) => {
+  // Extract the contactId from request parameters
+  const { contactId } = req.params;
 
-    // Extract the contactId from request parameters
-    const { contactId } = req.params;
-
-    // Find the index of the contact by ID
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-
-    // If the contact is not found, throw a 404 error
-    if (index === -1) {
-      return next(httpError(404, "Not found"));
-    }
-
-    // Remove the contact from the array
-    contacts.splice(index, 1);
-
-    // Write the updated contacts array back to the file
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-    // Respond with a success message
-    res.status(200).json({ message: "Contact deleted" });
-  } catch (error) {
-    next(error);
+  // Validate the format of contactId
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw httpError(400, "Invalid Contact ID format");
   }
+
+  // Model.findByIdAndDelete()
+  const result = await Contact.findByIdAndDelete(contactId);
+
+  // If the contact is not found, throw a 404 error
+  if (!result) {
+    throw httpError(404, "Not found");
+  }
+
+  res.json({
+    message: "Contact has been deleted",
+  });
 };
 
 // UPDATE CONTACT
-const updateContact = async (req, res, next) => {
-  try {
-    // Read the current contacts
-    const data = await fs.readFile(contactsPath);
-    const contacts = JSON.parse(data);
-
-    // Validate the incoming data using Joi
-    const { error } = contactValidation.validate(req.body);
-    if (error) {
-      throw httpError(400, "Missing fields");
-    }
-
-    // Find the contact by ID
-    const { contactId } = req.params;
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-
-    // If the contact is not found, throw a 404 error
-    if (index === -1) {
-      return next(httpError(404, "Not found"));
-    }
-
-    // Update the contact details
-    const { name, email, phone } = req.body;
-    contacts[index] = { ...contacts[index], name, email, phone };
-
-    // Write the updated contacts array back to the file
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-    // Respond with the updated contact
-    res.json(contacts[index]);
-  } catch (error) {
-    next(error);
+const updateContact = async (req, res) => {
+  // Validate the incoming data using Joi
+  const { error } = contactValidation.validate(req.body);
+  if (error) {
+    throw httpError(400, "Missing fields");
   }
+
+  // Find the contact by ID
+  const { contactId } = req.params;
+
+  // Validate the format of contactId
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw httpError(400, "Invalid Contact ID format");
+  }
+
+  // Model.findByIdAndUpdate()
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    // Return the updated version
+    new: true,
+  });
+
+  if (!result) {
+    throw httpError(404, "ID not found");
+  }
+
+  res.json(result);
+};
+
+// UPDATE STATUS CONTACT
+const updateStatusContact = async (req, res) => {
+  // Validate the incoming data using Joi
+  const { error } = favoriteValidation.validate(req.body);
+  if (error) {
+    throw httpError(400, "Missing favorite field");
+  }
+
+  const { contactId } = req.params;
+
+  // Validate the format of contactId
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw httpError(400, "Invalid Contact ID format");
+  }
+
+  //Model.findByIdAndUpdate()
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
+
+  if (!result) {
+    throw httpError(404, "ID not found");
+  }
+
+  res.json(result);
 };
 
 export {
@@ -149,4 +132,5 @@ export {
   addContact,
   removeContact,
   updateContact,
+  updateStatusContact,
 };
