@@ -7,9 +7,16 @@ import { Contact } from "../models/contactsModel.js";
 import mongoose from "mongoose";
 
 // GET ALL CONTACTS
-const listContacts = async (_req, res) => {
+const listContacts = async (req, res) => {
+  //To implement pagination
+  const { page = 1, limit = 20, favorite } = req.query;
+  const query = favorite ? { favorite: true } : {};
+
   //Model.find()
-  const result = await Contact.find();
+  const result = await Contact.find(query)
+    .skip((page - 1) * limit)
+    .limit(parseInt(limit));
+
   res.json(result);
 };
 
