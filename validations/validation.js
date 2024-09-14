@@ -1,18 +1,18 @@
 import Joi from "joi";
 
-// Define a validation for adding a contact
+// validation for adding/updating a contact
 const contactValidation = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
 });
 
-// Validation for updating favorite field
+// validation for updating favorite field
 const favoriteValidation = Joi.object({
   favorite: Joi.bool().required(),
 });
 
-// Validation for signup
+// validation for signup
 const signupValidation = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
@@ -28,14 +28,9 @@ const signupValidation = Joi.object({
   }),
 });
 
-// Validation for Subscription
 const subscriptionValidation = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business"),
 });
 
-export {
-  contactValidation,
-  favoriteValidation,
-  signupValidation,
-  subscriptionValidation,
-};
+// prettier-ignore
+export { contactValidation, favoriteValidation, signupValidation, subscriptionValidation };

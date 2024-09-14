@@ -2,7 +2,7 @@ import express from "express";
 import { ctrlWrapper } from "../../helpers/ctrlWrapper.js";
 //prettier-ignore
 import { listContacts, getContactById, addContact, removeContact, updateContact, updateStatusContact } from "../../controllers/contactsController.js";
-import { authenticateToken } from "../../middleswares/authenticateToken.js";
+import { authenticateToken } from "../../middlewares/authenticateToken.js";
 
 const router = express.Router();
 

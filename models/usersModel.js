@@ -16,6 +16,9 @@ const userSchema = new Schema(
       enum: ["starter", "pro", "business"],
       default: "starter",
     },
+    avatarURL: {
+      type: String,
+    },
     token: {
       type: String,
       default: null,
@@ -24,7 +27,6 @@ const userSchema = new Schema(
   { versionKey: false }
 );
 
-//MongoDB collection name = "users"
 const User = model("users", userSchema);
 
 export { User };
