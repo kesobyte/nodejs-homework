@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../app.js";
 import { User } from "../models/usersModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { jest } from "@jest/globals";
 
@@ -20,7 +20,7 @@ describe("Test @POST /api/users/login", () => {
   };
 
   beforeAll(() => {
-    // Mock User.findOne
+    // Mock User.findOne (Coming from mongoose)
     jest.spyOn(User, "findOne").mockImplementation(({ email }) => {
       if (email === signInData.email) {
         return Promise.resolve(mockUser);
