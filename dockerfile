@@ -21,3 +21,5 @@ EXPOSE 3000
 
 # How do we start the app
 CMD ["npm", "run", "start:dev" ]
+
+# test
