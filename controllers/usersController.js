@@ -101,8 +101,7 @@ const getCurrentUsers = async (req, res) => {
     email,
     subscription,
   });
-};
-
+}; // Update Subscription
 const updateUserSubscription = async (req, res) => {
   const { error } = subscriptionValidation.validate(req.body);
   if (error) {
