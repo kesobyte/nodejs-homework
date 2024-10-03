@@ -1,7 +1,7 @@
 import express from "express";
 import { ctrlWrapper } from "../../helpers/ctrlWrapper.js";
 // prettier-ignore
-import { register, login, logout, getCurrentUsers, verifyEmail, resendVerifyEmail} from "../../controllers/auth/authController.js";
+import { register, login, logout, getCurrentUsers, verifyEmail, resendVerifyEmail} from "../../controllers/authController.js"
 import { authenticateToken } from "../../middlewares/authenticateToken.js";
 
 const router = express.Router();
