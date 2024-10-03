@@ -2,6 +2,10 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
@@ -11,15 +15,11 @@ const userSchema = new Schema(
       required: [true, "Email is required"],
       unique: true,
     },
-    subscription: {
+    accessToken: {
       type: String,
-      enum: ["starter", "pro", "business"],
-      default: "starter",
+      default: null,
     },
-    avatarURL: {
-      type: String,
-    },
-    token: {
+    refreshToken: {
       type: String,
       default: null,
     },
@@ -32,7 +32,7 @@ const userSchema = new Schema(
       required: [true, "Verify token is required"],
     },
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 );
 
 const User = model("users", userSchema);
